@@ -7,6 +7,7 @@ TagManager:
   - Coin
   - CoinFlat
   - CoinFlipped
+  - OutOfBounds
   layers:
   - Default
   - TransparentFX

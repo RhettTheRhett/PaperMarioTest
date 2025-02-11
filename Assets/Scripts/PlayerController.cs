@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
     public LayerMask ground;
     public float rayLength = 0.3f;
     [SerializeField] bool isGrounded = true;
+    private Vector3 lastGroundedPos;
+    private bool checkLastPos = false;
 
     Rigidbody rb;
 
@@ -74,9 +76,20 @@ public class PlayerController : MonoBehaviour
 
         flipPlayer();
 
+        CheckPlayerFalling();
 
 
     }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.CompareTag("OutOfBounds")) {
+            
+            Invoke("SavePlayer",1);
+            Debug.Log("saved");
+           
+        }
+    }
+
     private void handleMove() {
         if (!is2d) {
             moveInput.y = Input.GetAxis("Horizontal") * -1;
@@ -211,6 +224,9 @@ public class PlayerController : MonoBehaviour
     void Jump() {
         rb.velocity = new Vector3(0f, jumpForce, 0f);                    // Vector3.up * (jumpForce) ; 
         jumpInput = false;
+        lastGroundedPos = transform.position;
+        Debug.Log(lastGroundedPos);
+        
     }
 
     void JumpGravity() {
@@ -222,4 +238,20 @@ public class PlayerController : MonoBehaviour
         
         }
     }
+
+    void CheckPlayerFalling() {
+        if (!isGrounded && checkLastPos) {
+            checkLastPos = false;
+            lastGroundedPos = transform.position;
+            Debug.Log(lastGroundedPos);
+        } else if (isGrounded) {
+            checkLastPos = true;
+        }
+
+    }
+
+    void SavePlayer() {
+        transform.position = lastGroundedPos;
+    }
+
 }
