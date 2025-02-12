@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public LayerMask ground;
     public float rayLength = 0.3f;
+    public Vector3 boxSize = new Vector3(1,1,1);
     [SerializeField] bool isGrounded = true;
     private Vector3 lastGroundedPos;
     private bool checkLastPos = false;
@@ -38,7 +39,7 @@ public class PlayerController : MonoBehaviour
     private Quaternion flipLeftFlat = Quaternion.Euler(0f, -180f, 0f);
     private Quaternion flipRightFlat = Quaternion.Euler(0f, 0f, 0f);
 
-    private Quaternion flipLeftFlip = Quaternion.Euler(0f, 180f, 0f);
+    private Quaternion flipLeftFlip = Quaternion.Euler(0f, -90f, 0f);
     private Quaternion flipRightFlip = Quaternion.Euler(0f, -90f, 0f);
 
     private Quaternion flipView = Quaternion.Euler(0f, -90f, 0f);
@@ -94,12 +95,21 @@ public class PlayerController : MonoBehaviour
         if (!is2d) {
             moveInput.y = Input.GetAxis("Horizontal") * -1;
             moveInput.x = Input.GetAxis("Vertical");
-            moveInput = moveInput.normalized;
+            //moveInput = moveInput.normalized;
         } else {
             moveInput.x = Input.GetAxis("Horizontal");
             moveInput.y = Input.GetAxis("Vertical");
 
         }
+
+        if (is2d) {
+            rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, 0);
+            rb.position = new Vector3(rb.position.x, rb.position.y, 0);
+
+        } else if (!is2d) {
+            rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, moveInput.y * moveSpeed);
+        }
+
     }
 
     private void flipPlayer() {
@@ -130,11 +140,11 @@ public class PlayerController : MonoBehaviour
 
             if (!flipped && moveInput.y < 0 && isGrounded) {
 
-                flipped = true;
+                flipped = false;
                 transform.rotation = Quaternion.Slerp(transform.rotation, flipLeftFlip, flipSpeed  * Time.deltaTime);
 
             } else if (flipped && moveInput.y > 0 && isGrounded) {
-                flipped = false;
+                flipped = true;
                 transform.rotation = Quaternion.Slerp(transform.rotation, flipRightFlip, flipSpeed  * Time.deltaTime);
             }
 
@@ -197,23 +207,25 @@ public class PlayerController : MonoBehaviour
             coyoteTimeCounter = 0f;
         }
 
-        if (is2d) {
-            rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, 0);
-            rb.position = new Vector3(rb.position.x, rb.position.y , 0);
-
-        } else if (!is2d) {
-            rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y , moveInput.y * moveSpeed);
+        if (Physics.CheckBox(groundCheck.position, boxSize, transform.rotation, ground)){
+            isGrounded = true;
+        } else {
+            isGrounded = false;
         }
-
         
+        /*
+         * old raycast ground checker
+         * 
         RaycastHit hit;
         if (Physics.Raycast(groundCheck.position, Vector3.down, out hit, rayLength, ground)) {
             isGrounded = true;
         } else {
             isGrounded = false;
         }
+        */
 
-        Debug.DrawRay(groundCheck.position, Vector2.down, Color.red);
+        //Debug.DrawRay(groundCheck.position, Vector2.down, Color.red);
+        
 
         if (jumpInput) {
             Jump();
@@ -242,7 +254,12 @@ public class PlayerController : MonoBehaviour
     void CheckPlayerFalling() {
         if (!isGrounded && checkLastPos) {
             checkLastPos = false;
-            lastGroundedPos = transform.position;
+            if (flipped) {
+                lastGroundedPos = new Vector3(transform.position.x - transform.localScale.x, transform.position.y, transform.position.z);
+            } else {
+                lastGroundedPos = new Vector3(transform.position.x + transform.localScale.x, transform.position.y, transform.position.z);
+            }
+            
             Debug.Log(lastGroundedPos);
         } else if (isGrounded) {
             checkLastPos = true;
@@ -252,6 +269,10 @@ public class PlayerController : MonoBehaviour
 
     void SavePlayer() {
         transform.position = lastGroundedPos;
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.DrawWireCube(groundCheck.transform.position, boxSize );
     }
 
 }
