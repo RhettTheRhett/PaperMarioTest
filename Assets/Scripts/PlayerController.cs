@@ -207,12 +207,12 @@ public class PlayerController : MonoBehaviour
             coyoteTimeCounter = 0f;
         }
 
-        if (Physics.CheckBox(groundCheck.position, boxSize, transform.rotation, ground)){
+        if (Physics.CheckBox(groundCheck.position, boxSize, transform.rotation, ground)) {
             isGrounded = true;
         } else {
             isGrounded = false;
         }
-        
+
         /*
          * old raycast ground checker
          * 
@@ -225,7 +225,7 @@ public class PlayerController : MonoBehaviour
         */
 
         //Debug.DrawRay(groundCheck.position, Vector2.down, Color.red);
-        
+
 
         if (jumpInput) {
             Jump();
@@ -233,7 +233,7 @@ public class PlayerController : MonoBehaviour
         JumpGravity();
     }
 
-    void Jump() {
+        void Jump() {
         rb.velocity = new Vector3(0f, jumpForce, 0f);                    // Vector3.up * (jumpForce) ; 
         jumpInput = false;
         lastGroundedPos = transform.position;
@@ -255,9 +255,9 @@ public class PlayerController : MonoBehaviour
         if (!isGrounded && checkLastPos) {
             checkLastPos = false;
             if (flipped) {
-                lastGroundedPos = new Vector3(transform.position.x - transform.localScale.x, transform.position.y, transform.position.z);
-            } else {
                 lastGroundedPos = new Vector3(transform.position.x + transform.localScale.x, transform.position.y, transform.position.z);
+            } else {
+                lastGroundedPos = new Vector3(transform.position.x - transform.localScale.x, transform.position.y, transform.position.z);
             }
             
             Debug.Log(lastGroundedPos);
