@@ -39,8 +39,8 @@ public class PlayerController : MonoBehaviour
     private Quaternion flipLeftFlat = Quaternion.Euler(0f, -180f, 0f);
     private Quaternion flipRightFlat = Quaternion.Euler(0f, 0f, 0f);
 
-    private Quaternion flipLeftFlip = Quaternion.Euler(0f, -90f, 0f);
-    private Quaternion flipRightFlip = Quaternion.Euler(0f, -90f, 0f);
+    private Quaternion flipLeftFlip = Quaternion.Euler(0f, -180f, 0f);
+    private Quaternion flipRightFlip = Quaternion.Euler(0f, 0f, 0f);
 
     private Quaternion flipView = Quaternion.Euler(0f, -90f, 0f);
 
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
 
         fallGravity = Physics.gravity.y * gravityMultiplier;
-        normalGravity = Physics.gravity.y;
+        normalGravity = Physics.gravity.y + 10;
     }
 
 
@@ -140,11 +140,11 @@ public class PlayerController : MonoBehaviour
 
             if (!flipped && moveInput.y < 0 && isGrounded) {
 
-                flipped = false;
+                flipped = true;
                 transform.rotation = Quaternion.Slerp(transform.rotation, flipLeftFlip, flipSpeed  * Time.deltaTime);
 
             } else if (flipped && moveInput.y > 0 && isGrounded) {
-                flipped = true;
+                flipped = false;
                 transform.rotation = Quaternion.Slerp(transform.rotation, flipRightFlip, flipSpeed  * Time.deltaTime);
             }
 
