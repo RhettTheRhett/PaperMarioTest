@@ -86,28 +86,31 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("OutOfBounds")) {
             
             Invoke("SavePlayer",1);
-            Debug.Log("saved");
+            //Debug.Log("saved");
            
         }
     }
 
     private void handleMove() {
-        if (!is2d) {
-            moveInput.y = Input.GetAxis("Horizontal") * -1;
-            moveInput.x = Input.GetAxis("Vertical");
-            //moveInput = moveInput.normalized;
-        } else {
-            moveInput.x = Input.GetAxis("Horizontal");
-            moveInput.y = Input.GetAxis("Vertical");
+        
+            if (!is2d) {
+                moveInput.y = Input.GetAxis("Horizontal") * -1;
+                moveInput.x = Input.GetAxis("Vertical");
+            } else {
+                moveInput.x = Input.GetAxis("Horizontal");
+                moveInput.y = Input.GetAxis("Vertical");
+            }
 
-        }
+            if (is2d) {
+                rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, 0);
 
-        if (is2d) {
-            rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, 0);
-            rb.position = new Vector3(rb.position.x, rb.position.y, 0);
-
-        } else if (!is2d) {
-            rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, moveInput.y * moveSpeed);
+                // Check if there's anything blocking the movement on the Z-axis
+                if (!IsObstacleInZAxis()) {
+                    rb.position = new Vector3(rb.position.x, rb.position.y, 0);
+                }
+            } else if (!is2d) {
+                rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, moveInput.y * moveSpeed);
+            
         }
 
     }
@@ -148,11 +151,7 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, flipRightFlip, flipSpeed  * Time.deltaTime);
             }
 
-            if (flipped) {
-                
-            } else if (!flipped) {
-                
-            }
+          
         }
 
 
@@ -271,8 +270,30 @@ public class PlayerController : MonoBehaviour
         transform.position = lastGroundedPos;
     }
 
+    private bool IsObstacleInZAxis() {
+        float checkDistance = 1.75f;  
+        Vector3 frontCheckPos = transform.position + Vector3.forward * checkDistance;
+        Vector3 backCheckPos = transform.position - Vector3.forward * checkDistance;
+
+        // Check for obstacles in front or behind the player
+        bool frontBlocked = Physics.CheckBox(frontCheckPos, transform.localScale / 2, Quaternion.identity, ground);
+        bool backBlocked = Physics.CheckBox(backCheckPos, transform.localScale / 2, Quaternion.identity, ground);
+
+        return frontBlocked || backBlocked;
+    }
+
     private void OnDrawGizmos() {
-        Gizmos.DrawWireCube(groundCheck.transform.position, boxSize );
+       // Gizmos.DrawWireCube(groundCheck.transform.position, boxSize );
+
+        float checkDistance = 1.75f;  
+        Vector3 frontCheckPos = transform.position + Vector3.forward * checkDistance;
+        Vector3 backCheckPos = transform.position - Vector3.forward * checkDistance;
+        Vector3 boxSize = transform.localScale / 2;  
+
+        Gizmos.color = Color.red;  
+        Gizmos.DrawWireCube(frontCheckPos, boxSize);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(backCheckPos, boxSize);
     }
 
 }
