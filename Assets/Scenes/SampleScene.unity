@@ -2483,8 +2483,8 @@ Transform:
   m_GameObject: {fileID: 748378741}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 22.73, y: -15.41, z: -3.29}
-  m_LocalScale: {x: 48.971867, y: 8.118711, z: 6.66}
+  m_LocalPosition: {x: 22.7461, y: -15.9337, z: -3.29}
+  m_LocalScale: {x: 48.937588, y: 7.071398, z: 6.66}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 847234825}
@@ -5102,8 +5102,6 @@ MonoBehaviour:
   is2d: 1
   camPos1: {fileID: 1676685519}
   camPos2: {fileID: 1893935356}
-  fliptest1: 0
-  fliptest2: 0
 --- !u!4 &1395438313
 Transform:
   m_ObjectHideFlags: 0
@@ -5554,8 +5552,8 @@ Transform:
   m_GameObject: {fileID: 1524696084}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 37.60564, y: -3.3017015, z: 15.264627}
-  m_LocalScale: {x: 172.4436, y: 26.591785, z: 0.10000001}
+  m_LocalPosition: {x: 37.60564, y: -3.3017015, z: 17.75}
+  m_LocalScale: {x: 405.0545, y: 63.94099, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1784271762}

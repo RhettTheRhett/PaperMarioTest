@@ -26,10 +26,12 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public LayerMask ground;
     public float rayLength = 0.3f;
-    public Vector3 boxSize = new Vector3(1,1,1);
+    public Vector3 boxSize;
     [SerializeField] bool isGrounded = true;
     private Vector3 lastGroundedPos;
     private bool checkLastPos = false;
+
+    private float checkDistance = 1.75f;
 
     Rigidbody rb;
 
@@ -39,8 +41,8 @@ public class PlayerController : MonoBehaviour
     private Quaternion flipLeftFlat = Quaternion.Euler(0f, -180f, 0f);
     private Quaternion flipRightFlat = Quaternion.Euler(0f, 0f, 0f);
 
-    private Quaternion flipLeftFlip = Quaternion.Euler(0f, -180f, 0f);
-    private Quaternion flipRightFlip = Quaternion.Euler(0f, 0f, 0f);
+    private Quaternion flipLeftFlip = Quaternion.Euler(0f, -90f, 0f);
+    private Quaternion flipRightFlip = Quaternion.Euler(0f, -270f, 0f);
 
     private Quaternion flipView = Quaternion.Euler(0f, -90f, 0f);
 
@@ -52,8 +54,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public Transform camPos1;
     [SerializeField] public Transform camPos2;
 
-    public float fliptest1;
-    public float fliptest2;
+   
 
     // Start is called before the first frame update
     void Start()
@@ -63,7 +64,7 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
 
         fallGravity = Physics.gravity.y * gravityMultiplier;
-        normalGravity = Physics.gravity.y + 10;
+        normalGravity = Physics.gravity.y - 10;
     }
 
 
@@ -137,23 +138,24 @@ public class PlayerController : MonoBehaviour
             }
 
         } 
+        /*
         else if (!is2d) {
 
             //transform.rotation = flipView;
 
-            if (!flipped && moveInput.y < 0 && isGrounded) {
+            if (!flipped && moveInput.x < 0 && isGrounded) {
 
                 flipped = true;
                 transform.rotation = Quaternion.Slerp(transform.rotation, flipLeftFlip, flipSpeed  * Time.deltaTime);
 
-            } else if (flipped && moveInput.y > 0 && isGrounded) {
+            } else if (flipped && moveInput.x > 0 && isGrounded) {
                 flipped = false;
                 transform.rotation = Quaternion.Slerp(transform.rotation, flipRightFlip, flipSpeed  * Time.deltaTime);
             }
 
           
         }
-
+        */
 
 
         ///////////////////////////////////////////////////
@@ -162,7 +164,7 @@ public class PlayerController : MonoBehaviour
     private void flipCamera() {
         if (Input.GetKeyDown(KeyCode.E) && isGrounded) {
             if (is2d) {
-                transform.rotation = flipView;
+                //transform.rotation = flipView;
                 
                 Camera.main.fieldOfView = 70f;
                 flipCam.transform.position = camPos1.transform.position;
@@ -174,7 +176,7 @@ public class PlayerController : MonoBehaviour
                 Camera.main.orthographic = false;
                 is2d = false;
             } else if (!is2d) {
-                transform.rotation = Quaternion.identity;
+                //transform.rotation = Quaternion.identity;
                 Camera.main.orthographic = true;
                 flatCam.transform.position = camPos2.transform.position;
                 //flatCam.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, flipRight, flipSpeed * Time.deltaTime);
@@ -271,7 +273,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool IsObstacleInZAxis() {
-        float checkDistance = 1.75f;  
+        //float checkDistance = 1.75f;  
         Vector3 frontCheckPos = transform.position + Vector3.forward * checkDistance;
         Vector3 backCheckPos = transform.position - Vector3.forward * checkDistance;
 
@@ -285,7 +287,7 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmos() {
        // Gizmos.DrawWireCube(groundCheck.transform.position, boxSize );
 
-        float checkDistance = 1.75f;  
+        //float checkDistance = 1.75f;  
         Vector3 frontCheckPos = transform.position + Vector3.forward * checkDistance;
         Vector3 backCheckPos = transform.position - Vector3.forward * checkDistance;
         Vector3 boxSize = transform.localScale / 2;  
