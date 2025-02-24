@@ -6,11 +6,11 @@ using Cinemachine;
 public class PlayerController : MonoBehaviour
 {
     
-    public float moveSpeed;
+    public float moveSpeed = 7f;
 
     Vector2 moveInput;
 
-    public float jumpForce = 5f;
+    public float jumpForce = 9f;
     public float gravityMultiplier = 1.5f;
     public float fallGravity;
     public float normalGravity;
@@ -97,22 +97,20 @@ public class PlayerController : MonoBehaviour
             if (!is2d) {
                 moveInput.y = Input.GetAxis("Horizontal") * -1;
                 moveInput.x = Input.GetAxis("Vertical");
-            } else {
+
+                rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, moveInput.y * moveSpeed);
+        } else {
                 moveInput.x = Input.GetAxis("Horizontal");
                 moveInput.y = Input.GetAxis("Vertical");
-            }
 
-            if (is2d) {
                 rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, 0);
 
-                // Check if there's anything blocking the movement on the Z-axis
-                if (!IsObstacleInZAxis()) {
-                    rb.position = new Vector3(rb.position.x, rb.position.y, 0);
-                }
-            } else if (!is2d) {
-                rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, moveInput.y * moveSpeed);
-            
+            if (!IsObstacleInZAxis()) {
+                rb.position = new Vector3(rb.position.x, rb.position.y, 0);
+            }
         }
+
+            
 
     }
 
@@ -139,6 +137,8 @@ public class PlayerController : MonoBehaviour
 
         } 
         /*
+         * 3d player flipping currently borken
+         * 
         else if (!is2d) {
 
             //transform.rotation = flipView;
@@ -278,24 +278,28 @@ public class PlayerController : MonoBehaviour
         Vector3 backCheckPos = transform.position - Vector3.forward * checkDistance;
 
         // Check for obstacles in front or behind the player
-        bool frontBlocked = Physics.CheckBox(frontCheckPos, transform.localScale / 2, Quaternion.identity, ground);
-        bool backBlocked = Physics.CheckBox(backCheckPos, transform.localScale / 2, Quaternion.identity, ground);
+        bool frontBlocked = Physics.CheckBox(frontCheckPos, transform.localScale , Quaternion.identity, ground);
+        bool backBlocked = Physics.CheckBox(backCheckPos, transform.localScale , Quaternion.identity, ground);
+
+        Debug.Log(frontBlocked);
+        Debug.Log(backBlocked);
 
         return frontBlocked || backBlocked;
     }
 
     private void OnDrawGizmos() {
-       // Gizmos.DrawWireCube(groundCheck.transform.position, boxSize );
-
+        Gizmos.DrawWireCube(groundCheck.transform.position, boxSize );
+        /*
         //float checkDistance = 1.75f;  
         Vector3 frontCheckPos = transform.position + Vector3.forward * checkDistance;
         Vector3 backCheckPos = transform.position - Vector3.forward * checkDistance;
-        Vector3 boxSize = transform.localScale / 2;  
+        Vector3 boxSize = new Vector3(1, 1, checkDistance * 2);
 
         Gizmos.color = Color.red;  
         Gizmos.DrawWireCube(frontCheckPos, boxSize);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(backCheckPos, boxSize);
+        */
     }
 
 }
